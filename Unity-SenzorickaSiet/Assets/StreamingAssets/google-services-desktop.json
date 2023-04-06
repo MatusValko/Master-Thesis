@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1085259684243",
+    "firebase_url": "https://senzorickasiet-default-rtdb.firebaseio.com",
+    "project_id": "senzorickasiet",
+    "storage_bucket": "senzorickasiet.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1085259684243:android:aa01babdf371dfbf227066",
+        "android_client_info": {
+          "package_name": "com.Matus.SenzorickaSiet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1085259684243-eq9ktg310tdllveqs0v62mgb75r5aids.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCovhn1xKK4q1qyeCeoO4YqEdKl4dpbFHw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1085259684243-eq9ktg310tdllveqs0v62mgb75r5aids.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

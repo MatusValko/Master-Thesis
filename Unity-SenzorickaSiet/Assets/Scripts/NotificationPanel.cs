@@ -67,6 +67,7 @@ public class NotificationPanel : MonoBehaviour
             GameObject sensorNotificationGameObject = Instantiate(sensorNotificationPrefab, new Vector3 (0,0,0), Quaternion.identity,verticalLayoutGroup.transform);
             SensorNotification sensorNotification =  sensorNotificationGameObject.GetComponent<SensorNotification>();
             //SET DATA
+            sensorNotification.SetNodeName(node.GetName());
             sensorNotification.SetName(sensor.GetName());
             sensorNotification.SetQuantityText(sensor.GetQuantity());
             sensorNotification.SetUnitText(sensor.GetUnit());
@@ -107,27 +108,6 @@ public class NotificationPanel : MonoBehaviour
         verticalLayoutGroup.GetComponent<RectTransform>().sizeDelta = sizeDelta;
         
     }
-    
-    public void SetUpNotificationBigger()
-    {
-        
-        Debug.Log("henlo");
-        
-    }
-    public void SetUpNotificationSmaller()
-    {
-        
-        
-        
-    }
-    
-    
 
-    private void SetUpNotification()
-    {
-        
-        
-        
-    }
 
 }

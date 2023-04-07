@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,7 +7,9 @@ public class SensorNotification : MonoBehaviour
     [SerializeField] private string sensorName;
     [SerializeField] private Text sensorUnit;
     [SerializeField] private Text sensorUnit2;
-
+    
+    [SerializeField] private Text valueText1;
+    [SerializeField] private Text valueText2;
 
     [SerializeField]  private Image sensorImage;
     
@@ -21,9 +21,13 @@ public class SensorNotification : MonoBehaviour
     [SerializeField]  private Sprite hlukImage;
     [SerializeField]  private Sprite pohybImage;
 
+    [SerializeField]  private string nodeName;
 
     
-
+    public void SetNodeName(string value)
+    {
+        nodeName = value; 
+    }
     public void SetName(string value)
     {
         sensorName = value; 
@@ -75,7 +79,43 @@ public class SensorNotification : MonoBehaviour
         }
     }
 
-    
+    public void SaveNotificationData()
+    {
+        int value1;
+        int value2;
+        if (string.IsNullOrEmpty(valueText1.text))
+        {
+            value1 = 0;
+        }
+        else
+        {
+            value1 = int.Parse(valueText1.text);
+        }
+        if (string.IsNullOrEmpty(valueText2.text))
+        {
+            value2 = 0;
+        }
+        else
+        {
+            value2 = int.Parse(valueText2.text);
+        }
+        
+        //Debug.Log(value1+" " + value2);
+        
+        if (value1 != 0)
+        {
+            string dataPath = nodeName +"/"+ sensorName+"/bigger" ;
+            PlayerPrefs.SetInt(dataPath , value1);
+            //Debug.Log("Set INT"+dataPath+""+value1);
+        }
+        if (value2 != 0)
+        {
+            string dataPath = nodeName +"/"+ sensorName+"/smaller" ;
+            PlayerPrefs.SetInt(dataPath , value2);
+            //Debug.Log("Set INT"+dataPath+""+value2);
+
+        }
+    }
     
     
 }

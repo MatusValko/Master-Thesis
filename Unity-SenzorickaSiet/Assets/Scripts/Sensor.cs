@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 
@@ -16,18 +15,7 @@ public class Sensor : MonoBehaviour
     [SerializeField] private TextMeshProUGUI sensorNameText;
     [SerializeField] private TextMeshProUGUI sensorQuantityText;
     [SerializeField] private TextMeshProUGUI sensorValueText;
-
-
-    private void Awake()
-    {
-        
-
-    }
-
-    private void Start()
-    {
-        //SetThreshold();
-    }
+    
 
     public void SetName(string value)
     {
@@ -87,18 +75,24 @@ public class Sensor : MonoBehaviour
 
     public void CheckValue()
     {
-        SetThreshold();
-        //Debug.Log( GetThreshold());
-        //Debug.Log( int.Parse(sensorValue));
-
-        
-        if (int.Parse(sensorValue)  >  GetThreshold())
+        //Debug.Log(dataPath);
+        if (PlayerPrefs.HasKey(dataPath+"/bigger"))
         {
-            //SPUSTIT NOTIFIKACIU
-            //Debug.Log("NOTIFIKACIA!"+ dataPath);
-            //Debug.Log(sensorUnit);
-
-            Notification.CreateNewNotification(nodeName, sensorName, sensorValue, sensorUnit);
+            if (int.Parse(sensorValue)  >  GetThreshold("/bigger"))
+            {
+                //SPUSTIT NOTIFIKACIU
+                Debug.Log("NOTIFIKACIA!"+ dataPath+"/bigger");
+                Notification.CreateNewNotification(nodeName, sensorName, sensorValue, sensorUnit,true);
+            }
+        }
+        if (PlayerPrefs.HasKey(dataPath+"/smaller"))
+        {
+            if (int.Parse(sensorValue)  <  GetThreshold("/smaller"))
+            {
+                //SPUSTIT NOTIFIKACIU
+                Debug.Log("NOTIFIKACIA!"+ dataPath+"/smaller");
+                Notification.CreateNewNotification(nodeName, sensorName, sensorValue, sensorUnit,false);
+            }
         }
     }
 
@@ -110,20 +104,12 @@ public class Sensor : MonoBehaviour
         dataPath = nodeName +"/"+ sensorName;
     }
     
-    private int GetThreshold()
+    private int GetThreshold(string compare)
     {
-        int threshold = PlayerPrefs.GetInt(dataPath);
+        int threshold = PlayerPrefs.GetInt(dataPath+compare);
+        //Debug.Log(dataPath+compare);
+
         return threshold;
-    }
-    
-    public void SetThreshold(int threshold = 100)
-    {
-        /*
-        if (!PlayerPrefs.HasKey(dataPath))
-        {
-            PlayerPrefs.SetInt(dataPath , threshold);
-        }*/
-        PlayerPrefs.SetInt(dataPath , threshold);
     }
     
     

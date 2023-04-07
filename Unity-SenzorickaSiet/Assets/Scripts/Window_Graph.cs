@@ -65,51 +65,10 @@ public class Window_Graph : MonoBehaviour {
         weekBtn.ClickFunc = () => {
             Week_SetVisibleAmount();
         };
-        /*
-        transform.Find("decreaseVisibleAmountBtn").GetComponent<Button_UI>().ClickFunc = () => {
-            DecreaseVisibleAmount(); 
-        };
-        transform.Find("increaseVisibleAmountBtn").GetComponent<Button_UI>().ClickFunc = () => {
-            IncreaseVisibleAmount();
-        };*/
-        
-        /*
-        transform.Find("dollarBtn").GetComponent<Button_UI>().ClickFunc = () => {
-            SetGetAxisLabelY((float _f) => "$" + Mathf.RoundToInt(_f));
-        };
-        transform.Find("euroBtn").GetComponent<Button_UI>().ClickFunc = () => {
-            SetGetAxisLabelY((float _f) => "€" + Mathf.RoundToInt(_f / 1.18f));
-        };
-        */
+
         HideTooltip();
 
-        /*
-        // Automatically modify graph values and visual
-        bool useBarChart = true;
-        FunctionPeriodic.Create(() => {
-            for (int i = 0; i < valueList.Count; i++) {
-                valueList[i] = Mathf.RoundToInt(valueList[i] * UnityEngine.Random.Range(0.8f, 1.2f));
-                if (valueList[i] < 0) valueList[i] = 0;
-            }
-            if (useBarChart) {
-                ShowGraph(valueList, barChartVisual, -1, (int _i) => "Day " + (_i + 1), (float _f) => "$" + Mathf.RoundToInt(_f));
-            } else {
-                ShowGraph(valueList, lineGraphVisual, -1, (int _i) => "Day " + (_i + 1), (float _f) => "$" + Mathf.RoundToInt(_f));
-            }
-            useBarChart = !useBarChart;
-        }, .5f);
-        //*/
-
-        /*int index = 0;
-        FunctionPeriodic.Create(() => {
-            index = (index + 1) % valueList.Count;
-        }, .1f);
-        FunctionPeriodic.Create(() => {
-            //int index = UnityEngine.Random.Range(0, valueList.Count);
-            UpdateValue(index, valueList[index] + UnityEngine.Random.Range(1, 3));
-        }, .02f);
         
-        */
         
     }
 

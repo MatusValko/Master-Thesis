@@ -1,14 +1,12 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using Firebase;
 using Firebase.Database;
 using Firebase.Extensions;
 using UnityEngine;
 using UnityEngine.UI;
-using Random = UnityEngine.Random;
+
 
 public class FirebaseDatabaseManager : MonoBehaviour
 {
@@ -30,83 +28,13 @@ public class FirebaseDatabaseManager : MonoBehaviour
 
     private async void Awake()
     {
-        //TODO: VYMAZAT POTOM
-        PlayerPrefs.DeleteAll();
-        
+
         FirebaseDatabase.DefaultInstance.SetPersistenceEnabled(false);
         
-        /*
-        Debug.Log("CHECKING DEPENDENCIES");
-        await FirebaseApp.CheckAndFixDependenciesAsync();
-        Debug.Log("GETTING DATA");
-        await GetData();
-        Debug.Log("SHOW DATA");
-        ShowNodesDetail();
-        */
         
         GetAndShowData();
         await GetValueChanged();
     }
-    
-    private void AddData()
-    {
-        DatabaseReference reference;
-        reference = FirebaseDatabase.DefaultInstance.RootReference;
-        
-        float temperature = Random.Range(1.0f, 40.0f);
-        string currDate = DateTime.Now.ToString("dd/MM/yyyy/");
-        string currTime = DateTime.Now.ToString("HH:mm:ss");
-        string time = currDate + currTime;
-        
-        Debug.Log(time);
-        
-        
-        reference.Child("Data").Child("Uzol_1").Child("Cas").SetValueAsync(time);
-        reference.Child("Data").Child("Uzol_1").Child("Teplomer").Child("Velicina").SetValueAsync("Teplota");
-        reference.Child("Data").Child("Uzol_1").Child("Teplomer").Child("Hodnota").SetValueAsync(temperature);
-        reference.Child("Data").Child("Uzol_1").Child("Teplomer").Child("Jednotka").SetValueAsync("°C");
-            
-        reference.Child("Data").Child("Uzol_1").Child("Cas").SetValueAsync(time);
-        reference.Child("Data").Child("Uzol_1").Child("Vlhkomer").Child("Velicina").SetValueAsync("Vlhkosť");
-        reference.Child("Data").Child("Uzol_1").Child("Vlhkomer").Child("Hodnota").SetValueAsync(temperature);
-        reference.Child("Data").Child("Uzol_1").Child("Vlhkomer").Child("Jednotka").SetValueAsync("%");
-        
-        reference.Child("Data").Child("Uzol_1").Child("Cas").SetValueAsync(time);
-        reference.Child("Data").Child("Uzol_1").Child("Oxid uhličitý").Child("Velicina").SetValueAsync("Co2");
-        reference.Child("Data").Child("Uzol_1").Child("Oxid uhličitý").Child("Hodnota").SetValueAsync(temperature);
-        reference.Child("Data").Child("Uzol_1").Child("Oxid uhličitý").Child("Jednotka").SetValueAsync("%");
-
-        reference.Child("Data").Child("Uzol_1").Child("Cas").SetValueAsync(time);
-        reference.Child("Data").Child("Uzol_1").Child("Svetlomer").Child("Velicina").SetValueAsync("Svietivosť");
-        reference.Child("Data").Child("Uzol_1").Child("Svetlomer").Child("Hodnota").SetValueAsync(temperature);
-        reference.Child("Data").Child("Uzol_1").Child("Svetlomer").Child("Jednotka").SetValueAsync("Lux");
-        
-        reference.Child("Data").Child("Uzol_1").Child("Cas").SetValueAsync(time);
-        reference.Child("Data").Child("Uzol_1").Child("Hlukomer").Child("Velicina").SetValueAsync("Hlučnosť");
-        reference.Child("Data").Child("Uzol_1").Child("Hlukomer").Child("Hodnota").SetValueAsync(temperature);
-        reference.Child("Data").Child("Uzol_1").Child("Hlukomer").Child("Jednotka").SetValueAsync("Db");
-        
-        reference.Child("Data").Child("Uzol_2").Child("Cas").SetValueAsync(time);
-        reference.Child("Data").Child("Uzol_2").Child("Teplomer").Child("Velicina").SetValueAsync("Teplota");
-        reference.Child("Data").Child("Uzol_2").Child("Teplomer").Child("Hodnota").SetValueAsync(temperature/2);
-        reference.Child("Data").Child("Uzol_2").Child("Teplomer").Child("Jednotka").SetValueAsync("°C");
-        
-        reference.Child("Data").Child("Uzol_3").Child("Cas").SetValueAsync(time);
-        reference.Child("Data").Child("Uzol_3").Child("Teplomer").Child("Velicina").SetValueAsync("Teplota");
-        reference.Child("Data").Child("Uzol_3").Child("Teplomer").Child("Hodnota").SetValueAsync(temperature/4);
-        reference.Child("Data").Child("Uzol_3").Child("Teplomer").Child("Jednotka").SetValueAsync("°C");
-        
-        reference.Child("Data").Child("Uzol_4").Child("Cas").SetValueAsync(time);
-        reference.Child("Data").Child("Uzol_4").Child("Teplomer").Child("Velicina").SetValueAsync("Teplota");
-        reference.Child("Data").Child("Uzol_4").Child("Teplomer").Child("Hodnota").SetValueAsync(temperature/8);
-        reference.Child("Data").Child("Uzol_4").Child("Teplomer").Child("Jednotka").SetValueAsync("°C");
-        
-        reference.Child("Data").Child("Uzol_5").Child("Cas").SetValueAsync(time);
-        reference.Child("Data").Child("Uzol_5").Child("Teplomer").Child("Velicina").SetValueAsync("Teplota");
-        reference.Child("Data").Child("Uzol_5").Child("Teplomer").Child("Hodnota").SetValueAsync(temperature*2);
-        reference.Child("Data").Child("Uzol_5").Child("Teplomer").Child("Jednotka").SetValueAsync("°C");
-    }
-
 
     private async void GetAndShowData()
     {
@@ -194,20 +122,6 @@ public class FirebaseDatabaseManager : MonoBehaviour
     }
     
 
-    public void ShowNodes()
-    {
-        foreach (var node in allNodes)
-        {
-            Debug.Log(node.GetName());
-            
-            foreach (var sensor in node.GetAllSensors())
-            {
-                Debug.Log(sensor.GetName());
-            }
-            Debug.Log("-------------------------");
-        }
-    }
-
     private void ShowNodesDetail()
     {
         foreach (var variable in snapshot.Children)
@@ -293,14 +207,12 @@ public class FirebaseDatabaseManager : MonoBehaviour
         }
         
         ChangeOrderInSensorList();
-        //ShowNodes();
     }
 
     private void ChangeOrderInSensorList()
     {
         foreach (var node in allNodes)
         {
-            //Debug.Log(node.GetName());
             for (int i = 0; i < node.GetAllSensors().Count; i++)
             {
                 if (node.GetAllSensors()[i].GetName() == "Teplomer")

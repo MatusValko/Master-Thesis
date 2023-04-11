@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,18 +13,16 @@ public class SensorNotification : MonoBehaviour
     [SerializeField] private Text valueText2;
 
     [SerializeField]  private Image sensorImage;
-    
-    [SerializeField]  private Sprite teplotaImage;
-    [SerializeField]  private Sprite vlhkostImage;
-
-    [SerializeField]  private Sprite oxidUholnatyImage;
-    [SerializeField]  private Sprite osvetlenieImage;
-    [SerializeField]  private Sprite hlukImage;
-    [SerializeField]  private Sprite pohybImage;
-
     [SerializeField]  private string nodeName;
 
+    [SerializeField]  private GameObject popUpWindow;
+    private bool isCoroutineRunning = false;
     
+    private void Awake()
+    {
+        popUpWindow = FindObjectOfType<PopUp>(true).gameObject;
+        popUpWindow.SetActive(false);
+    }
     public void SetNodeName(string value)
     {
         nodeName = value; 
@@ -48,7 +47,7 @@ public class SensorNotification : MonoBehaviour
         switch (sensorQuantity.text)
         { 
             case "Teplota":
-                sensorImage.sprite = teplotaImage;
+                sensorImage.sprite = FirebaseDatabaseManager.teplotaImage;
                 var sizeDelta = sensorImage.gameObject.GetComponent<RectTransform>().sizeDelta;
                 sizeDelta.x /= 2;
                 sensorImage.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(sizeDelta.x,sizeDelta.y);
@@ -57,65 +56,81 @@ public class SensorNotification : MonoBehaviour
                 sensorImage.gameObject.transform.localPosition = new Vector3(transformPosition.x,transformPosition.y,transformPosition.z) ;
                 break; 
             case "Vlhkosť":
-               sensorImage.sprite = vlhkostImage;
+               sensorImage.sprite = FirebaseDatabaseManager.vlhkostImage;
                break;
             case "Oxid uhoľnatý":
-                sensorImage.sprite = oxidUholnatyImage;
+                sensorImage.sprite = FirebaseDatabaseManager.oxidUholnatyImage;
                 break;
-            case "Osvetlenie":
-                sensorImage.sprite = osvetlenieImage;
+            case "Intenzita osvetlenia":
+                sensorImage.sprite = FirebaseDatabaseManager.osvetlenieImage;
                 break;
-            case "Hluk":
-                sensorImage.sprite = hlukImage;
+            case "Intenzita zvuku":
+                sensorImage.sprite = FirebaseDatabaseManager.hlukImage;
                 break;
             case "Pohyb":
-                sensorImage.sprite = pohybImage;
+                sensorImage.sprite = FirebaseDatabaseManager.pohybImage;
                 break;
-
+            case "Oxid uhličitý":
+                sensorImage.sprite = FirebaseDatabaseManager.oxidUhličitýImage;
+                break;
+            case "Dym":
+                sensorImage.sprite = FirebaseDatabaseManager.smokeImage;
+                break;
             default: 
-                //Debug.Log("Nenaslo");
+                Debug.Log("Nenaslo");
                 break;
-
         }
     }
 
     public void SaveNotificationData()
     {
-        int value1;
-        int value2;
-        if (string.IsNullOrEmpty(valueText1.text))
+        if (!string.IsNullOrEmpty(valueText1.text))
         {
-            value1 = 0;
-        }
-        else
-        {
-            value1 = int.Parse(valueText1.text);
-        }
-        if (string.IsNullOrEmpty(valueText2.text))
-        {
-            value2 = 0;
-        }
-        else
-        {
-            value2 = int.Parse(valueText2.text);
-        }
-        
-        //Debug.Log(value1+" " + value2);
-        
-        if (value1 != 0)
-        {
+            var value1 = int.Parse(valueText1.text);
             string dataPath = nodeName +"/"+ sensorName+"/bigger" ;
             PlayerPrefs.SetInt(dataPath , value1);
-            //Debug.Log("Set INT"+dataPath+""+value1);
         }
-        if (value2 != 0)
+        else
         {
+            PlayerPrefs.DeleteKey(nodeName +"/"+ sensorName+"/bigger");
+        }
+        if (!string.IsNullOrEmpty(valueText2.text))
+        {
+            var value2 = int.Parse(valueText2.text);
             string dataPath = nodeName +"/"+ sensorName+"/smaller" ;
             PlayerPrefs.SetInt(dataPath , value2);
-            //Debug.Log("Set INT"+dataPath+""+value2);
-
         }
+        else
+        {
+            PlayerPrefs.DeleteKey(nodeName +"/"+ sensorName+"/smaller");
+        }
+        
+        popUpWindow.SetActive(true);
+        var transformPosition = popUpWindow.transform.position;
+        transformPosition.y= 0;
+        popUpWindow.transform.position = new Vector3(transformPosition.x, transformPosition.y, transformPosition.z);
+
+        if (!isCoroutineRunning)
+        {
+            StartCoroutine(ActivateObjectWithDelay());
+        }}
+
+    IEnumerator ActivateObjectWithDelay() {
+        isCoroutineRunning = true;
+        yield return new WaitForSeconds(3);
+        popUpWindow.SetActive(false);
+        isCoroutineRunning = false;
     }
     
-    
+    public void AssignNotificationData()
+    {
+        if (PlayerPrefs.HasKey(nodeName + "/" + sensorName + "/bigger"))
+        {
+            GetComponentsInChildren<InputField>()[0].text = PlayerPrefs.GetInt(nodeName + "/" + sensorName + "/bigger").ToString();
+        }
+        if (PlayerPrefs.HasKey(nodeName + "/" + sensorName + "/smaller"))
+        {
+            GetComponentsInChildren<InputField>()[1].text = PlayerPrefs.GetInt(nodeName + "/" + sensorName + "/smaller").ToString();
+        }
+    }
 }

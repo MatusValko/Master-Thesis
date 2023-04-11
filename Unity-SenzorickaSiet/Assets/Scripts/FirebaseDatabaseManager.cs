@@ -16,27 +16,53 @@ public class FirebaseDatabaseManager : MonoBehaviour
     
     [SerializeField] private NotificationPanel notificationPanel;
     [SerializeField] private int logsNumber = 30;
-
+    
+    
+    [SerializeField] private Sprite teplotaImageIcon;
+    [SerializeField] private Sprite vlhkostImageIcon;
+    [SerializeField] private Sprite oxidUholnatyImageIcon;
+    [SerializeField] private Sprite oxidUhličitýImageIcon;
+    [SerializeField] private Sprite osvetlenieImageIcon;
+    [SerializeField] private Sprite hlukImageIcon;
+    [SerializeField] private Sprite pohybImageIcon;
+    [SerializeField] private Sprite smokeImageImageIcon;
+    
+    public static Sprite teplotaImage;
+    public static Sprite vlhkostImage;
+    public static Sprite oxidUholnatyImage;
+    public static Sprite osvetlenieImage; 
+    public static Sprite hlukImage;
+    public static Sprite pohybImage;
+    public static Sprite oxidUhličitýImage;
+    public static Sprite smokeImage;
+    
     private DataSnapshot snapshot;
     public DataSnapshot logSnapshot;
     private bool first = false;
-    
-    public static List<Node>  allNodes = new List<Node>();
+    private bool waiting = false;
 
-    
+    public static List<Node>  allNodes = new List<Node>();
 
 
     private async void Awake()
     {
-
+        teplotaImage = teplotaImageIcon;
+        vlhkostImage = vlhkostImageIcon;
+        oxidUholnatyImage = oxidUholnatyImageIcon;
+        osvetlenieImage = osvetlenieImageIcon;
+        hlukImage = hlukImageIcon;
+        pohybImage = pohybImageIcon;
+        oxidUhličitýImage = oxidUhličitýImageIcon;
+        smokeImage = smokeImageImageIcon;
+            
         FirebaseDatabase.DefaultInstance.SetPersistenceEnabled(false);
         
         
-        GetAndShowData();
+        await GetAndShowData();
         await GetValueChanged();
     }
 
-    private async void GetAndShowData()
+    private async Task GetAndShowData()
     {
         Debug.Log("KONTROLA ZÁVISLOSTÍ");
         await FirebaseApp.CheckAndFixDependenciesAsync();
@@ -65,27 +91,18 @@ public class FirebaseDatabaseManager : MonoBehaviour
         if (first)
         {
             Debug.Log("HODNOTY SA ZMENILI");
-            foreach (var node in allNodes)
+            if (!waiting)
             {
-                if (node)
-                {
-                    Destroy(node.gameObject);
-                }
+                Invoke( nameof(GetAndShowData),10);
+                waiting = true;
             }
-            allNodes.Clear();
-            nodeGrid.GetComponent<RectTransform>().sizeDelta = new Vector2(900,0);
-            Invoke( nameof(GetAndShowData),1);
         }
         else
         {
             first = true;
         }
     }
-    
 
-    
-    
-    
     private async Task GetData()
     { 
         await FirebaseDatabase.DefaultInstance.
@@ -124,11 +141,21 @@ public class FirebaseDatabaseManager : MonoBehaviour
 
     private void ShowNodesDetail()
     {
+        foreach (var node in allNodes)
+        {
+            if (node)
+            {
+                Destroy(node.gameObject);
+            }
+        }
+        allNodes.Clear();
+        nodeGrid.GetComponent<RectTransform>().sizeDelta = new Vector2(900,0);
+        
+        
+        
+        int i = 0;
         foreach (var variable in snapshot.Children)
         {
-            //ZVACSI GRID O JEDNO OKNO
-            Vector2 size = nodeGrid.GetComponent<RectTransform>().sizeDelta;
-            nodeGrid.GetComponent<RectTransform>().sizeDelta = new Vector2(size.x,size.y + nodeGrid.GetComponent<GridLayoutGroup>().cellSize.y + nodeGrid.GetComponent<GridLayoutGroup>().spacing.y);
             //VYTVOR OKNO
             GameObject nodeGameObject = Instantiate(nodePrefab, new Vector3 (0,0,0), Quaternion.identity,nodeGrid.transform) ;
             Node actualNode = nodeGameObject.GetComponent<Node>();
@@ -169,7 +196,7 @@ public class FirebaseDatabaseManager : MonoBehaviour
                         }
                     }
                     actualSensor.CheckValue();
-                    
+                    actualSensor.SetImage();
                     //TEPLOMER A VLHKOMER SU VZDY UKAZANE AK SA NACHADZAJU
                     if (actualSensor.GetName() == "Teplomer" || actualSensor.GetName() == "Vlhkomer")
                     {
@@ -204,8 +231,17 @@ public class FirebaseDatabaseManager : MonoBehaviour
                     }
                 }
             }
+            
+            if (i % 2 == 0)
+            {
+                Vector2 size = nodeGrid.GetComponent<RectTransform>().sizeDelta;
+                nodeGrid.GetComponent<RectTransform>().sizeDelta = new Vector2(size.x,size.y + nodeGrid.GetComponent<GridLayoutGroup>().cellSize.y + nodeGrid.GetComponent<GridLayoutGroup>().spacing.y);
+            }
+            i++;
         }
-        
+        waiting = false;
+        nodeGrid.transform.parent.GetComponent<ScrollRect>().verticalNormalizedPosition = 1;
+
         ChangeOrderInSensorList();
     }
 
@@ -228,7 +264,6 @@ public class FirebaseDatabaseManager : MonoBehaviour
                     tmp = node.GetAllSensors()[1];
                     node.GetAllSensors()[1] = node.GetAllSensors()[i];
                     node.GetAllSensors()[i] = tmp;
-
                 }
             }
         }
@@ -240,13 +275,11 @@ public class FirebaseDatabaseManager : MonoBehaviour
         if (allNodes != null)
         {
             notificationPanel.ShowNotificationScreen();
-
         }
         else
         {
             Debug.Log("Not ready!");
         }
-        
     }
     
 }

@@ -18,6 +18,8 @@ public class DetailedNode : MonoBehaviour
     [SerializeField] private Text nodeNameText;
     [SerializeField] private FirebaseDatabaseManager firebaseDatabaseManager;
     [SerializeField] private GameObject switchedSwitch;
+    [SerializeField] private GameObject actualNodesScreen;
+
 
     [SerializeField] private List<int> valueList = new List<int>();
     [SerializeField] private List<string> timeList = new List<string>();
@@ -25,12 +27,82 @@ public class DetailedNode : MonoBehaviour
     [SerializeField] private string unit;
     [SerializeField] private string quantity;
     
-    
+    private bool right = true;
+    private bool left = false;
+    private bool moving = false;
+    private Vector3 base_position;
+    [SerializeField] private float speed = 4.5f;
 
+    void Start()
+    {
+        base_position = transform.position;
+    }
+    void Update()
+    {
+        MoveScreen();
+        
+    }
     
+    public void Move()
+    {
+        if (moving) return;
+        moving = true;
+    }
+    
+    public void MoveScreen()
+    {
+        if (moving)
+        {
+            if (right)
+            {
+                var transformPosition = transform.position;
+                transformPosition.x -= speed * Time.deltaTime;
+                transform.position = transformPosition;
+
+                var transformPosition2 = actualNodesScreen.transform.position;
+                transformPosition2.x -= speed * Time.deltaTime;
+                actualNodesScreen.transform.position= transformPosition2;
+                
+                if (transform.position.x <= 0)
+                {
+                    transformPosition.x = 0;
+                    transform.position = transformPosition;
+                    right = false;
+                    left = true;
+                    moving = false;
+                }
+            }
+            else if (left)
+            {
+                var transformPosition = transform.position;
+                transformPosition.x += speed * Time.deltaTime;
+                transform.position = transformPosition;
+                
+                var transformPosition2 = actualNodesScreen.transform.position;
+                transformPosition2.x += speed * Time.deltaTime;
+                actualNodesScreen.transform.position= transformPosition2;
+
+                if (transform.position.x >= base_position.x)
+                {
+                    transformPosition.x = base_position.x;
+                    transform.position = transformPosition;
+
+                    transformPosition2.x = 0;
+                    actualNodesScreen.transform.position= transformPosition2;
+
+                    right = true;
+                    left = false;
+                    moving = false;
+                }
+            }
+        }
+    }
+
     public void ShowNodeDetailScreen(string nazov = "Chyba")
     {
-        gameObject.SetActive(true);
+        //gameObject.SetActive(true);
+        ResetNodeDetailScreen();
+        Move();
         
         if (string.IsNullOrEmpty(nazov) || nazov == "Chyba")
         {
@@ -63,7 +135,7 @@ public class DetailedNode : MonoBehaviour
                     //SET TEXT
                     actualSensor.SetQuantityText();
                     actualSensor.SetValueAndUnitText();
-                    
+                    actualSensor.SetImage();
                     GameObject sensorSwitch = Instantiate(sensorSwitchPrefab, new Vector3 (0,0,0), Quaternion.identity,windowGraph.HorizontalLayoutGroup.transform);
                     sensorSwitch.GetComponentInChildren<Text>().text = sensor.GetName();
                     Vector2 size3 = windowGraph.HorizontalLayoutGroup.GetComponent<RectTransform>().sizeDelta;
@@ -91,7 +163,6 @@ public class DetailedNode : MonoBehaviour
                         {
                             Debug.Log("ERROR");
                         }
-
                     };
                     
                     
@@ -109,6 +180,9 @@ public class DetailedNode : MonoBehaviour
                 break;
             }
         }
+        //DAJ SCROLL HORE
+        sensorGrid.transform.parent.parent.GetComponent<ScrollRect>().verticalNormalizedPosition = 1;
+        
     }
 
     private async void InitGraph(string nodeName,string sensorName, Window_Graph windowGraph)
@@ -132,13 +206,11 @@ public class DetailedNode : MonoBehaviour
         timeList.Clear();
         foreach (var unique in firebaseDatabaseManager.logSnapshot.Children)
         {
-            //Debug.Log(firebaseDatabaseManager.logSnapshot.Key);
             foreach (var sensor in unique.Children)
             {
                 if (sensor.Key == "Timestamp" )//&& okno <= 3
                 {
                     string time;
-                    //Debug.Log($"Timestamp: " + sensor.Value );
                     //Debug.Log(UnixTimeStampToDateTime(double.Parse(sensor.GetValue(true).ToString())));
                     //Debug.Log(DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(sensor.GetValue(true).ToString())).LocalDateTime.Hour);
                     time =  DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(sensor.GetValue(true).ToString())).LocalDateTime.Hour.ToString();
@@ -177,11 +249,13 @@ public class DetailedNode : MonoBehaviour
         }
     }
     
-    public void CloseNodeDetailScreen()
+    public void ResetNodeDetailScreen()
     {
-        DeleteSensors();
-        DeleteGraph();
-        gameObject.SetActive(false);
+        
+            DeleteSensors();
+            DeleteGraph();
+            //gameObject.SetActive(false);
+
     }
     
     private void DeleteSensors()
@@ -195,8 +269,10 @@ public class DetailedNode : MonoBehaviour
     }
     private void DeleteGraph()
     {
-        Destroy(windowGraph.gameObject);
-
+        if (windowGraph != null)
+        {
+            Destroy(windowGraph.gameObject);
+        }
     }
 
 }

@@ -54,22 +54,50 @@ public class Window_Graph : MonoBehaviour {
 
         // Set up buttons
         barChartBtn.ClickFunc = () => {
+            lineGraphBtn.GetComponentInChildren<Image>().color = Color.white;
+            lineGraphBtn.GetComponent<Button_UI>().hoverBehaviour_Color_Exit = Color.white;
+            lineGraphBtn.icon.color = new Color32(238,100,89,255);
+            barChartBtn.GetComponent<Button_UI>().hoverBehaviour_Color_Exit = new Color32(238,100,89,255);
+            barChartBtn.GetComponentInChildren<Image>().color = new Color32(238,100,89,255);
+            barChartBtn.icon.color = Color.white;
+
             SetGraphVisual(barChartVisual);
+            
         };
         lineGraphBtn.ClickFunc = () => {
+            barChartBtn.GetComponentInChildren<Image>().color = Color.white;
+            barChartBtn.GetComponent<Button_UI>().hoverBehaviour_Color_Exit = Color.white;
+            barChartBtn.icon.color = new Color32(238,100,89,255);
+
+            lineGraphBtn.GetComponent<Button_UI>().hoverBehaviour_Color_Exit = new Color32(238,100,89,255);
+            lineGraphBtn.GetComponentInChildren<Image>().color = new Color32(238,100,89,255);
+            lineGraphBtn.icon.color =  Color.white;
+
             SetGraphVisual(lineGraphVisual);
         };
         dayBtn.ClickFunc = () => {
+            
+            weekBtn.GetComponentInChildren<Image>().color = Color.white;
+            weekBtn.GetComponent<Button_UI>().hoverBehaviour_Color_Exit = Color.white;
+            weekBtn.icon.color = new Color32(238,100,89,255);
+            dayBtn.GetComponent<Button_UI>().hoverBehaviour_Color_Exit = new Color32(238,100,89,255);
+            dayBtn.GetComponentInChildren<Image>().color = new Color32(238,100,89,255);
+            dayBtn.icon.color = Color.white;
+
             Day_SetVisibleAmount();
         };
         weekBtn.ClickFunc = () => {
+            dayBtn.GetComponentInChildren<Image>().color = Color.white;
+            dayBtn.GetComponent<Button_UI>().hoverBehaviour_Color_Exit = Color.white;
+            dayBtn.icon.color = new Color32(238,100,89,255);
+            weekBtn.GetComponent<Button_UI>().hoverBehaviour_Color_Exit = new Color32(238,100,89,255);
+            weekBtn.GetComponentInChildren<Image>().color = new Color32(238,100,89,255);
+            weekBtn.icon.color =  Color.white;
+            
             Week_SetVisibleAmount();
         };
 
         HideTooltip();
-
-        
-        
     }
 
 
@@ -263,16 +291,16 @@ public class Window_Graph : MonoBehaviour {
         bool yScaleChanged = yMinimumBefore != yMinimum || yMaximumBefore != yMaximum;
 
         if (!yScaleChanged) {
-            // Y Scale did not change, update only this value
+            // Mierka Y sa nezmenila, aktualizuj iba túto hodnotu
             float xPosition = xSize + index * xSize;
             float yPosition = ((value - yMinimum) / (yMaximum - yMinimum)) * graphHeight;
 
-            // Add data point visual
+            // Pridaj bod
             string tooltipText = getAxisLabelY(value);
             graphVisualObjectList[index].SetGraphVisualObjectInfo(new Vector2(xPosition, yPosition), xSize, tooltipText);
         } else {
-            // Y scale changed, update whole graph and y axis labels
-            // Cycle through all visible data points
+            // Zmenila sa mierka Y, aktualizujte celý graf a označenie osi y
+            // Prechádza cez všetky viditeľné dátové body
             int xIndex = 0;
             for (int i = Mathf.Max(valueList.Count - maxVisibleValueAmount, 0); i < valueList.Count; i++) {
                 float xPosition = xSize + xIndex * xSize;
@@ -325,9 +353,9 @@ public class Window_Graph : MonoBehaviour {
 
 
 
-    /*
-     * Interface definition for showing visual for a data point
-     * */
+    
+      
+    //Definícia rozhrania na zobrazenie vizuálu pre dátový bod
     public interface IGraphVisual {
 
         IGraphVisualObject CreateGraphVisualObject(Vector2 graphPosition, float graphPositionWidth, string tooltipText);
@@ -345,10 +373,6 @@ public class Window_Graph : MonoBehaviour {
 
     }
 
-
-    /*
-     * Displays data points as a Bar Chart
-     * */
     private class BarChartVisual : IGraphVisual {
 
         private RectTransform graphContainer;
@@ -422,16 +446,9 @@ public class Window_Graph : MonoBehaviour {
             public void CleanUp() {
                 Destroy(barGameObject);
             }
-
-
         }
-
     }
 
-
-    /*
-     * Displays data points as a Line Graph
-     * */
     private class LineGraphVisual : IGraphVisual {
 
         private RectTransform graphContainer;
@@ -513,7 +530,6 @@ public class Window_Graph : MonoBehaviour {
 
 
         public class LineGraphVisualObject : IGraphVisualObject {
-
             public event EventHandler OnChangedGraphVisualObjectInfo;
 
             private GameObject dotGameObject;

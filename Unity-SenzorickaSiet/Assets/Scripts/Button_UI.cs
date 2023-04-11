@@ -58,6 +58,7 @@ namespace CodeMonkey.Utils {
         private bool mouseOver;
         private float mouseOverPerSecFuncTimer;
 
+        public Image icon;
         private Action internalOnPointerEnterFunc, internalOnPointerExitFunc, internalOnPointerClickFunc;
 
 #if SOUND_MANAGER

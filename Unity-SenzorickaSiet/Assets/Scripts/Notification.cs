@@ -1,4 +1,3 @@
-using System;
 using Unity.Notifications.Android;
 using UnityEngine;
 
@@ -10,7 +9,6 @@ public class Notification : MonoBehaviour
     {
         CreateNewChannel();
     }
-
     
     private void CreateNewChannel()
     {
@@ -27,9 +25,8 @@ public class Notification : MonoBehaviour
     
     public static void CreateNewNotification(string nodeName, string sensorName, string sensorValue, string sensorUnit , bool compare)
     {
-        string compared;
         //1 je vacsia, 0 je mensia
-        compared = compare ? "väčšia" : "menšia";
+        var compared = compare ? "väčšia" : "menšia";
         
         string valueAndUnit = sensorValue + sensorUnit;
         var notification = new AndroidNotification();

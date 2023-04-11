@@ -6,11 +6,14 @@ using UnityEngine.UI;
 public class Node : MonoBehaviour
 {
     [SerializeField] private string nodeName;
-    [SerializeField] private TextMeshProUGUI nodeNameText;
+    [SerializeField] private Text nodeNameText;
     [SerializeField] private Button nodeDetail;
     [SerializeField] private DetailedNode detailedNode;
     
     [SerializeField] private List<Sensor> allSensors;
+    
+    
+    
     
     void Start()
     {
@@ -20,7 +23,7 @@ public class Node : MonoBehaviour
     public void SetName(string value)
     {
         nodeName = value;
-        nodeNameText.SetText(value); 
+        nodeNameText.text = value; 
     }
     public string GetName()
     {

@@ -72,13 +72,15 @@ public class NotificationPanel : MonoBehaviour
             sensorNotification.SetQuantityText(sensor.GetQuantity());
             sensorNotification.SetUnitText(sensor.GetUnit());
             sensorNotification.SetImage();
-
+            sensorNotification.AssignNotificationData();
+            
             Vector2 size = verticalLayoutGroup.GetComponent<RectTransform>().sizeDelta;
             float addToSizeY = sensorNotificationPrefab.GetComponent<RectTransform>().sizeDelta.y + verticalLayoutGroup.spacing;
             //Debug.Log(addToSizeX);
             verticalLayoutGroup.GetComponent<RectTransform>().sizeDelta = new Vector2(size.x  ,size.y +addToSizeY);
                     
         }
+        verticalLayoutGroup.transform.parent.GetComponent<ScrollRect>().verticalNormalizedPosition = 1;
     }
     
     
@@ -86,6 +88,7 @@ public class NotificationPanel : MonoBehaviour
     {
         DeleteSensors();
         DeleteNotificationGameObjects();
+        FindObjectOfType<PopUp>(true).gameObject.SetActive(false);
         gameObject.SetActive(false);
     }
     

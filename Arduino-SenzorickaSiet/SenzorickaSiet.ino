@@ -126,28 +126,12 @@ void SendData(String path,String nodeName,int counter){
   
 
   //TEPLOTA
-  int t;
-  while (true){
-    t = dht.readTemperature();
-    Serial.print(",Teplota ");
-    Serial.print(t);
-    if(!isnan(t) && t != 0){
-      break;
-    }
-  }
+  int t = dht.readTemperature();
   if (Firebase.setFloat(firebaseData, path + "/Teplomer/Hodnota", t)) {
       Serial.println(firebaseData.dataPath() + " = " + t);
     }
   //VLHKOSŤ
-  int h;
-  while (true){
-    h = dht.readHumidity();
-    Serial.print(",VLHKOSŤ ");
-    Serial.print(h);
-    if(!isnan(h) && h != 0){
-      break;
-    }
-  }
+  int h = dht.readHumidity();
   if (Firebase.setFloat(firebaseData, path + "/Vlhkomer/Hodnota", h)) {
       Serial.println(firebaseData.dataPath() + " = " + h);
     }

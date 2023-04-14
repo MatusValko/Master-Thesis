@@ -4,7 +4,7 @@
 #define FIREBASE_HOST "senzorickasiet-default-rtdb.firebaseio.com"
 #define FIREBASE_AUTH "8HYBrCaWCCqZ1tdRLxenn4RDOd3mn6kZKIWbPHUM"
 #define WIFI_SSID "Valko_von"
-#define WIFI_PASSWORD "matusnet64"
+#define WIFI_PASSWORD "**********"
 
 #define DHTPIN A0 //Teplota
 #define MQ7pin A1 //CO
